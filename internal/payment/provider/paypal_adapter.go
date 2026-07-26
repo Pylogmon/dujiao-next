@@ -169,7 +169,8 @@ func (a *paypalAdapter) ParseWebhook(ctx context.Context, raw models.JSON, heade
 		httpHeaders.Set(k, v)
 	}
 
-	if err := paypal.VerifyWebhookSignature(ctx, cfg, httpHeaders, event); err != nil {
+	// 必须传递 PayPal 实际收到的原始请求体，不能传解析后的 map。
+	if err := paypal.VerifyWebhookSignature(ctx, cfg, httpHeaders, body); err != nil {
 		return nil, mapPaypalError(err)
 	}
 
